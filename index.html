@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPatch | Cluttercore Dev Blog</title>
+    <link rel="icon" href="https://cdn.pixabay.com/animation/2022/07/29/03/42/03-42-11-849_512.gif" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff6ec7;
+            --electric-blue: #5dccff;
+            --lime-green: #a3ff5d;
+            --purple: #b56cff;
+            --yellow: #fff95d;
+            --paper: #fff5e0;
+            --tape-yellow: rgba(255, 253, 143, 0.5);
+            --tape-pink: rgba(255, 175, 243, 0.5);
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(135deg, #ffd1f9, #c8f4ff);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-attachment: fixed;
+            padding: 20px;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%23ff6ec7" stroke-width="2" stroke-dasharray="5,5"/></svg>'),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="%235dccff" opacity="0.1"/></svg>');
+            background-size: 100px, 80px;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Press Start 2P', cursive;
+            font-weight: normal;
+            line-height: 1.2;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        /* Decorative elements */
+        .washi-tape {
+            position: absolute;
+            height: 30px;
+            background: var(--tape-yellow);
+            transform: rotate(-3deg);
+            z-index: 10;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+
+        .tape-pink {
+            background: var(--tape-pink);
+        }
+
+        .sticker {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 5s infinite ease-in-out;
+            z-index: 5;
+        }
+
+        .paper-note {
+            background: var(--paper);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            position: relative;
+            transform: rotate(1deg);
+            border: 1px dashed #ccc;
+        }
+
+        .paper-note::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            right: 30px;
+            width: 30px;
+            height: 30px;
+            background: var(--tape-yellow);
+            transform: rotate(45deg);
+            z-index: -1;
+        }
+
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--electric-blue);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 var(--neon-pink);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            padding: 15px 0;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            color: var(--purple);
+            text-decoration: none;
+            text-shadow: 
+                3px 3px 0 var(--yellow),
+                -1px -1px 0 var(--electric-blue);
+            transform: rotate(-3deg);
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.7);
+            border: 3px dashed var(--neon-pink);
+            border-radius: 20px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 15px;
+        }
+
+        nav ul li a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.7);
+            border: 2px solid var(--neon-pink);
+            border-radius: 30px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        nav ul li a:hover {
+            transform: translateY(-5px) rotate(3deg);
+            background: var(--lime-green);
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+        }
+
+        nav ul li a i {
+            font-size: 1.2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            color: var(--purple);
+            display: inline-block;
+            padding: 20px;
+            background: rgba(255,255,255,0.7);
+            border: 4px dashed var(--electric-blue);
+            transform: rotate(-2deg);
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            background: rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px dotted var(--neon-pink);
+            transform: rotate(1deg);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: var(--neon-pink);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--electric-blue);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) rotate(3deg);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Featured Posts */
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            color: var(--purple);
+            text-align: center;
+            padding: 20px;
+            background: var(--yellow);
+            display: inline-block;
+            transform: rotate(-2deg);
+            border: 4px dashed var(--neon-pink);
+            box-shadow: 10px 10px 0 var(--lime-green);
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            position: relative;
+        }
+
+        .post-card {
+            background: var(--paper);
+            padding: 30px;
+            transition: var(--transition);
+            border: 3px solid var(--electric-blue);
+            box-shadow: 8px 8px 0 var(--purple);
+            position: relative;
+            z-index: 2;
+            transform: rotate(0deg);
+        }
+
+        .post-card:nth-child(odd) {
+            transform: rotate(2deg);
+        }
+
+        .post-card:nth-child(even) {
+            transform: rotate(-1deg);
+        }
+
+        .post-card:hover {
+            transform: rotate(0deg) translateY(-10px) !important;
+            box-shadow: 15px 15px 0 var(--purple);
+            z-index: 3;
+        }
+
+        .post-img {
+            height: 200px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid var(--neon-pink);
+            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%);
+        }
+
+        .post-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .post-card:hover .post-img img {
+            transform: scale(1.1);
+        }
+
+        .post-tag {
+            display: inline-block;
+            background: var(--lime-green);
+            color: #333;
+            padding: 5px 15px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            border: 2px dashed var(--purple);
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--purple);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dotted var(--neon-pink);
+        }
+
+        .post-meta img {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--electric-blue);
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        /* Sticker Grid */
+        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .sticker-item {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            transform: rotate(0deg);
+            transition: var(--transition);
+            border: 3px dashed var(--neon-pink);
+            box-shadow: 5px 5px 0 var(--yellow);
+        }
+
+        .sticker-item:nth-child(odd) {
+            transform: rotate(3deg);
+        }
+
+        .sticker-item:nth-child(even) {
+            transform: rotate(-2deg);
+        }
+
+        .sticker-item:hover {
+            transform: rotate(0deg) scale(1.1) !important;
+            z-index: 2;
+        }
+
+        .sticker-item i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--purple);
+        }
+
+        /* Projects Section */
+        .projects-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .project-card {
+            width: 300px;
+            background: var(--paper);
+            padding: 20px;
+            transform: rotate(0deg);
+            transition: var(--transition);
+            border: 3px solid var(--lime-green);
+            box-shadow: 8px 8px 0 var(--electric-blue);
+            position: relative;
+        }
+
+        .project-card:nth-child(3n+1) {
+            transform: rotate(-3deg);
+        }
+
+        .project-card:nth-child(3n+2) {
+            transform: rotate(2deg);
+        }
+
+        .project-card:nth-child(3n+3) {
+            transform: rotate(4deg);
+        }
+
+        .project-card:hover {
+            transform: rotate(0deg) scale(1.05) !important;
+            z-index: 2;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--purple);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tech {
+            background: var(--yellow);
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 1px dotted var(--purple);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0 30px;
+            position: relative;
+            background: rgba(255,255,255,0.7);
+            border-top: 5px dashed var(--neon-pink);
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--purple);
+            transform: rotate(-2deg);
+            display: inline-block;
+            padding: 5px 15px;
+            background: var(--lime-green);
+            border: 2px solid var(--electric-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: var(--purple);
+            transition: var(--transition);
+            font-size: 1.5rem;
+            border-radius: 50%;
+            border: 2px dashed var(--neon-pink);
+            box-shadow: 3px 3px 0 var(--yellow);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px) rotate(5deg);
+            background: var(--neon-pink);
+            color: white;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col ul li a {
+            color: #333;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .footer-col ul li a i {
+            color: var(--purple);
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--neon-pink);
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(-10px, -10px) rotate(5deg);
+            }
+            50% {
+                transform: translate(10px, 10px) rotate(-5deg);
+            }
+            75% {
+                transform: translate(10px, -10px) rotate(5deg);
+            }
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(32px, 9999px, 28px, 0); }
+            5% { clip: rect(13px, 9999px, 37px, 0); }
+            10% { clip: rect(40px, 9999px, 20px, 0); }
+            15% { clip: rect(9px, 9999px, 53px, 0); }
+            20% { clip: rect(34px, 9999px, 14px, 0); }
+            25% { clip: rect(11px, 9999px, 43px, 0); }
+            30% { clip: rect(42px, 9999px, 23px, 0); }
+            35% { clip: rect(27px, 9999px, 58px, 0); }
+            40% { clip: rect(3px, 9999px, 35px, 0); }
+            45% { clip: rect(38px, 9999px, 10px, 0); }
+            50% { clip: rect(19px, 9999px, 47px, 0); }
+            55% { clip: rect(46px, 9999px, 6px, 0); }
+            60% { clip: rect(15px, 9999px, 32px, 0); }
+            65% { clip: rect(48px, 9999px, 26px, 0); }
+            70% { clip: rect(7px, 9999px, 50px, 0); }
+            75% { clip: rect(29px, 9999px, 13px, 0); }
+            80% { clip: rect(22px, 9999px, 45px, 0); }
+            85% { clip: rect(4px, 9999px, 38px, 0); }
+            90% { clip: rect(31px, 9999px, 17px, 0); }
+            95% { clip: rect(44px, 9999px, 9px, 0); }
+            100% { clip: rect(18px, 9999px, 52px, 0); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(22px, 9999px, 52px, 0); }
+            5% { clip: rect(38px, 9999px, 17px, 0); }
+            10% { clip: rect(9px, 9999px, 44px, 0); }
+            15% { clip: rect(45px, 9999px, 22px, 0); }
+            20% { clip: rect(13px, 9999px, 29px, 0); }
+            25% { clip: rect(50px, 9999px, 7px, 0); }
+            30% { clip: rect(26px, 9999px, 48px, 0); }
+            35% { clip: rect(32px, 9999px, 15px, 0); }
+            40% { clip: rect(47px, 9999px, 19px, 0); }
+            45% { clip: rect(10px, 9999px, 38px, 0); }
+            50% { clip: rect(53px, 9999px, 9px, 0); }
+            55% { clip: rect(14px, 9999px, 34px, 0); }
+            60% { clip: rect(20px, 9999px, 42px, 0); }
+            65% { clip: rect(37px, 9999px, 13px, 0); }
+            70% { clip: rect(6px, 9999px, 46px, 0); }
+            75% { clip: rect(43px, 9999px, 11px, 0); }
+            80% { clip: rect(17px, 9999px, 32px, 0); }
+            85% { clip: rect(28px, 9999px, 40px, 0); }
+            90% { clip: rect(5px, 9999px, 35px, 0); }
+            95% { clip: rect(51px, 9999px, 18px, 0); }
+            100% { clip: rect(24px, 9999px, 27px, 0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero {
+                padding: 150px 0 80px;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .hero p {
+                font-size: 1.4rem;
+            }
+            nav ul {
+                gap: 10px;
+            }
+            .section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+                padding: 15px;
+            }
+            .hero p {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.7rem;
+            }
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative Stickers -->
+    <div class="sticker" style="top: 100px; left: 5%;"><i class="fas fa-star"></i></div>
+    <div class="sticker" style="top: 400px; right: 10%;"><i class="fas fa-heart"></i></div>
+    <div class="sticker" style="top: 700px; left: 5%;"><i class="fas fa-code"></i></div>
+    <div class="sticker" style="top: 200px; right: 5%;"><i class="fas fa-music"></i></div>
+    
+    <!-- Washi Tape -->
+    <div class="washi-tape" style="top: 80px; left: 0; width: 300px;"></div>
+    <div class="washi-tape tape-pink" style="top: 350px; right: 0; width: 150px; transform: rotate(2deg);"></div>
+    <div class="washi-tape" style="bottom: 200px; left: 1%; width: 180px; transform: rotate(-1deg);"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="#home" class="logo animated" data-text="PixelPatch">
+                <span class="glitch" data-text="PixelPatch">PixelPatch</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#blog"><i class="fas fa-blog"></i> Blog</a></li>
+                    <li><a href="#projects"><i class="fas fa-project-diagram"></i> Projects</a></li>
+                    <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
+                    <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="gif-icon" style="display:inline-block; position: center; margin-top:25px; border-radius:50%; border:4px dashed var(--lime-green); background:var(--paper); box-shadow:0 6px 0 var(--neon-pink); padding:12px;">
+            <img src="https://cdn.pixabay.com/animation/2022/07/29/03/42/03-42-11-849_512.gif" alt="GIF Icon" style="width:60px; height:60px; border-radius:50%; display:block;">
+            </div>
+            <h1 style="font-family:'Press Start 2P',cursive; font-size:2.5rem; color:rgb(41, 40, 40); border-radius:25px; border:4px solid var(--purple); box-shadow:8px 8px 0 var(--neon-pink); padding:30px 15px; margin-bottom:30px; transform:rotate(-2deg); letter-spacing:2px; text-align:center; display:block;">
+            Welcome to My Digital Scrapbook
+            </h1>
+            <p id="typing-hero" style="font-size:1.5rem; color:var(--purple); background:var(--paper); border-radius:15px; border:2px dashed var(--lime-green); box-shadow:5px 5px 0 var(--yellow); padding:18px; margin-bottom:35px; transform:rotate(1deg);">
+            </p>
+            <script>
+            const text = "A messy collection of coding adventures, design experiments, and creative chaos!";
+            const el = document.getElementById('typing-hero');
+            let i = 0;
+            function typeWriter() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 40);
+                }
+            }
+            typeWriter();
+            </script>
+            <div class="hero-btns">
+            <a href="#blog" class="btn btn-primary" style="background:var(--electric-blue); color:var(--paper); border:2px solid var(--purple);">Explore Articles</a>
+            <a href="#projects" class="btn btn-secondary" style="background:var(--lime-green); color:var(--purple); border:2px solid var(--neon-pink);">See Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Posts -->
+    <section id="blog" class="section">
+        <div class="container">
+            <h2 class="section-title">LATEST ARTICLES</h2>
+            <div class="posts-grid">
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Web Development">
+                    </div>
+                    <span class="post-tag">Web Design</span>
+                    <h3 class="post-title">CLUTTERCORE AESTHETICS</h3>
+                    <p>Why messy design is taking over the internet and how to implement it in your projects.</p>
+                    <div class="post-meta">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author">
+                        <div>
+                            <strong>Jamie Chen</strong>
+                            <div>May 28, 2025 · 7k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/1979289147/photo/data-analysis-science-and-big-data-with-ai-technology-analyst-or-scientist-uses-a-computer.jpg?s=612x612&w=0&k=20&c=vmC-jVG6PNPRQtgtBp2y1caApEGYjt-fDrm0VzRgvK8=" alt="AI Integration">
+                    </div>
+                    <span class="post-tag">AI</span>
+                    <h3 class="post-title">GLITCH ART GENERATION</h3>
+                    <p>Creating retro glitch effects with CSS and JavaScript for that authentic Y2K vibe.</p>
+                    <div class="post-meta">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author">
+                        <div>
+                            <strong>Alex Rivera</strong>
+                            <div>Jun 5, 2025 · 9k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1160&q=80" alt="Web3 Development">
+                    </div>
+                    <span class="post-tag">Animation</span>
+                    <h3 class="post-title">MICRO-INTERACTIONS</h3>
+                    <p>Small animations that make your website feel alive and engaging.</p>
+                    <div class="post-meta">
+                        <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Author">
+                        <div>
+                            <strong>Taylor Kim</strong>
+                            <div>Apr 15, 2025 · 6k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/1927795888/photo/artificial-intelligence-machine-learning-natural-language-processing-data-technology.jpg?s=612x612&w=0&k=20&c=0RDMMQzoXsBGA4NESIMZ4J1noqFPcIg74Fp1lpGiOfU=" alt="UI/UX Design">
+                    </div>
+                    <span class="post-tag">UI/UX</span>
+                    <h3 class="post-title">UI/UX-DRIVEN DESIGN</h3>
+                    <p>Exploring the latest trends in web development and design.</p>
+                    <div class="post-meta">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Author">
+                        <div>
+                            <strong>Jordan Lee</strong>
+                            <div>Mar 22, 2025 · 1k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/1493766948/photo/female-developers-using-ai-writes-the-code-for-data-analytics.jpg?s=612x612&w=0&k=20&c=-DsfIdtHLivv0eBFRd2vkdWXAC4H2H0uQQsVfn6YcyE=" alt="WebDev">
+                    </div>
+                    <span class="post-tag">Web Dev</span>
+                    <h3 class="post-title">WEB DEVELOPMENT TRENDS</h3>
+                    <p>It’s all about the user experience.</p>
+                    <div class="post-meta">
+                        <img src="https://media.istockphoto.com/id/2183915020/photo/modern-businessman-working-in-contemporary-office-space.jpg?s=612x612&w=0&k=20&c=SNrqQ1jkJ9Mp0x70whBYAuY7ubtS-Cn-yDeAS4xlkng=" alt="Author">
+                        <div>
+                            <strong>Umar Khan</strong>
+                            <div>Aug 10, 2025 · 8k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/2202190803/photo/a-person-working-on-a-laptop-analyzing-data-through-visual-graphs-and-charts-showcasing.jpg?s=612x612&w=0&k=20&c=NftgBEXxqofgkCSd7KG9Dc9BZvj5gX3SRhYoGco3Wdc=" alt="WordPress Development">
+                    </div>
+                    <span class="post-tag">WordPress</span>
+                    <h3 class="post-title">WORDPRESS DEVELOPMENT</h3>
+                    <p>Enhancing user experience through effective WordPress solutions.</p>
+                    <div class="post-meta">
+                        <img src="https://media.istockphoto.com/id/2192499195/photo/studio-portrait-of-happy-multiracial-mid-adult-man-wearing-brown-shirt-toothy-smile.jpg?s=612x612&w=0&k=20&c=QO9XdwXJdi9xyqsKWnamn41hPTOMFEHx3P9v4zDvbOk=" alt="Author">
+                        <div>
+                            <strong>Hemant Sharma</strong>
+                            <div>Aug 2, 2025 · 5k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/1682774131/photo/ai-artificial-intelligence-technology-head.jpg?s=612x612&w=0&k=20&c=ZogPSzBn2Ipt2t3JRVZAhwvyjx4THRu-qdIdTNxxHY4=" alt="AI/ML">
+                    </div>
+                    <span class="post-tag">Graphic Design</span>
+                    <h3 class="post-title">GRAPHIC DESIGN TRENDS</h3>
+                    <p>Exploring the latest in graphic design.</p>
+                    <div class="post-meta">
+                        <img src="https://media.istockphoto.com/id/2197507240/photo/young-man-in-a-blue-shirt-looking-thoughtfully-outdoors-during-golden-hour.jpg?s=612x612&w=0&k=20&c=7fk-XxUy2g4jX3YOmEL7yvuTiZf4KgeupzehzVpLTQQ=" alt="Author">
+                        <div>
+                            <strong>Lorsam White</strong>
+                            <div>Mar 22, 2025 · 3k views</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-card">
+                    <div class="post-img">
+                        <img src="https://media.istockphoto.com/id/1628291798/photo/artificial-intelligence-and-machine-learning-concept.jpg?s=612x612&w=0&k=20&c=7HuC-jduWch3dDGzcw5Rx4JTFJIEiHSx4bsUzBiQAJI=" alt="AI/ML">
+                    </div>
+                    <span class="post-tag">AI/ML</span>
+                    <h3 class="post-title">AI & MACHINE LEARNING</h3>
+                    <p>Leveraging AI for smarter applications.</p>
+                    <div class="post-meta">
+                        <img src="https://media.istockphoto.com/id/2218333101/photo/confident-mature-man-smiling-in-professional-attire-with-a-calm-background.jpg?s=612x612&w=0&k=20&c=USO4FSo7wO-ETzZD7hCt0DDRuf36l9EjPzrET3geMxk=" alt="yu">
+                        <div>
+                            <strong>Yusuf Ali</strong>
+                            <div>Mar 22, 2025 · 1.2k views</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticker Grid -->
+    <section class="container">
+        <div class="sticker-grid">
+            <div class="sticker-item">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Design</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-code"></i>
+                <h3>Developer</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-gamepad"></i>
+                <h3>Gaming</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-film"></i>
+                <h3>Movies</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-book-open"></i>
+                <h3>Books</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-bolt"></i>
+                <h3>Tech</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-microphone"></i>
+                <h3>Podcasts</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-music"></i>
+                <h3>Music</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-camera"></i>
+                <h3>Photo</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-robot"></i>
+                <h3>AI</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-heart"></i>
+                <h3>Community</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-lightbulb"></i>
+                <h3>Ideas</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-globe"></i>
+                <h3>Travel</h3>
+            </div>
+            <div class="sticker-item">
+                <i class="fas fa-book"></i>
+                <h3>Reading</h3>
+         </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">RECENT PROJECTS</h2>
+            <div class="projects-container">
+                <div class="project-card">
+                    <h3 class="project-title">SCRAPBOOK CMS</h3>
+                    <p>A content management system designed for messy, creative expression.</p>
+                    <div class="tech-stack">
+                        <span class="tech">React</span>
+                        <span class="tech">Node.js</span>
+                        <span class="tech">MongoDB</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">GLITCH GALLERY</h3>
+                    <p>Interactive art gallery showcasing digital glitch art creations.</p>
+                    <div class="tech-stack">
+                        <span class="tech">Three.js</span>
+                        <span class="tech">GSAP</span>
+                        <span class="tech">WebGL</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">RETRO GAME HUB</h3>
+                    <p>Collection of Y2K-inspired browser games with nostalgic aesthetics.</p>
+                    <div class="tech-stack">
+                        <span class="tech">JavaScript</span>
+                        <span class="tech">Phaser</span>
+                        <span class="tech">Canvas</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">PIXEL PATCH PORTFOLIO</h3>
+                    <p>My personal portfolio showcasing my work and creative journey.</p>
+                    <div class="tech-stack">
+                        <span class="tech">HTML</span>
+                        <span class="tech">CSS</span>
+                        <span class="tech">JavaScript</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">AI ART GENERATOR</h3>
+                    <p>Web app that generates unique glitch art using AI algorithms.</p>
+                    <div class="tech-stack">
+                        <span class="tech">TensorFlow</span>
+                        <span class="tech">Python</span>
+                        <span class="tech">Flask</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">UI DESIGN TOOL</h3>
+                    <p>Web app that assists in creating user interfaces with AI-generated suggestions.</p>
+                    <div class="tech-stack">
+                        <span class="tech">HTML</span>
+                        <span class="tech">CSS</span>
+                        <span class="tech">JavaScript</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">Graphic Design Tool</h3>
+                    <p>Web app that assists in creating stunning graphic designs with AI-generated suggestions.</p>
+                    <div class="tech-stack">
+                        <span class="tech">Adobe XD</span>
+                        <span class="tech">Figma</span>
+                        <span class="tech">Sketch</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">Web Design Tool</h3>
+                    <p>Web app that assists in creating beautiful and responsive web designs with AI-generated suggestions.</p>
+                    <div class="tech-stack">
+                        <span class="tech">CodePen</span>
+                        <span class="tech">css</span>
+                        <span class="tech">JavaScript</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section" style="position:relative;">
+        <div class="container" style="position:relative;">
+            <!-- Decorative border and profile image -->
+            <div style="position:absolute; top:-60px; left:50%; transform:translateX(-50%); z-index:2;">
+                <img src="image/profile.jpg" alt="Profile" style="width:120px; height:120px; border-radius:50%; border:6px dashed var(--neon-pink); box-shadow:0 8px 0 var(--electric-blue); background:white;">
+            </div>
+            <div style="border:5px dashed var(--lime-green); border-radius:30px; padding:40px 20px 20px 20px; background:rgba(255,255,255,0.85); box-shadow:10px 10px 0 var(--yellow); margin-top:60px;">
+                <h2 class="section-title">ABOUT ME</h2>
+                <p style="font-size:1.2rem; margin-bottom:30px;">
+                    I'm a passionate web developer with a love for creating interactive and engaging digital experiences. My journey in tech has been fueled by curiosity and a desire to push the boundaries of what's possible.
+                </p>
+                <div class="about-skills" style="margin-bottom:30px;">
+                    <h3><i class="fas fa-laptop-code" style="color:var(--purple);"></i> Skills</h3>
+                    <ul style="display:flex; flex-wrap:wrap; gap:15px; list-style:none; margin-top:10px;">
+                        <li style="background:var(--yellow); padding:8px 18px; border-radius:20px; border:2px dashed var(--neon-pink);"><i class="fab fa-html5"></i> HTML & CSS</li>
+                        <li style="background:var(--yellow); padding:8px 18px; border-radius:20px; border:2px dashed var(--neon-pink);"><i class="fab fa-js"></i> JavaScript</li>
+                        <li style="background:var(--yellow); padding:8px 18px; border-radius:20px; border:2px dashed var(--neon-pink);"><i class="fab fa-react"></i> React</li>
+                        <li style="background:var(--yellow); padding:8px 18px; border-radius:20px; border:2px dashed var(--neon-pink);"><i class="fab fa-node-js"></i> Node.js</li>
+                        <li style="background:var(--yellow); padding:8px 18px; border-radius:20px; border:2px dashed var(--neon-pink);"><i class="fas fa-database"></i> MongoDB</li>
+                    </ul>
+                </div>
+                <div class="about-experience" style="margin-bottom:30px;">
+                    <h3><i class="fas fa-briefcase" style="color:var(--electric-blue);"></i> Experience</h3>
+                    <ul>
+                        <li>Web Developer at XYZ Company</li>
+                        <li>Freelance Designer</li>
+                        <li>Intern at ABC Agency</li>
+                    </ul>
+                </div>
+                <div class="about-education" style="margin-bottom:30px;">
+                    <h3><i class="fas fa-graduation-cap" style="color:var(--lime-green);"></i> Education</h3>
+                    <ul>
+                        <li>Bachelor's Degree in Computer Science</li>
+                        <li>Web Development Bootcamp</li>
+                        <li>Online Courses in UX/UI Design</li>
+                    </ul>
+                </div>
+                <div class="about-interests">
+                    <h3><i class="fas fa-heart" style="color:var(--neon-pink);"></i> Interests</h3>
+                    <ul style="display:flex; flex-wrap:wrap; gap:15px; list-style:none; margin-top:10px;">
+                        <li style="background:var(--paper); padding:8px 18px; border-radius:20px; border:2px dashed var(--electric-blue);"><i class="fas fa-rocket"></i> Exploring new technologies</li>
+                        <li style="background:var(--paper); padding:8px 18px; border-radius:20px; border:2px dashed var(--electric-blue);"><i class="fas fa-camera"></i> Photography</li>
+                        <li style="background:var(--paper); padding:8px 18px; border-radius:20px; border:2px dashed var(--electric-blue);"><i class="fas fa-plane"></i> Traveling</li>
+                        <li style="background:var(--paper); padding:8px 18px; border-radius:20px; border:2px dashed var(--electric-blue);"><i class="fas fa-gamepad"></i> Gaming</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>PixelPatch</h3>
+                    <p>A digital scrapbook of coding adventures, design experiments, and creative chaos.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/jahidads"><i class="fab fa-github"></i></a>
+                        <a href="https://x.com/jahidhasan_tw"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/jahidhasan2.0ff/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/jahidads1"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Website</h3>
+                    <ul>
+                        <li><a href="https://jahidads.github.io/Portfolio/"><i class="fas fa-chevron-right"></i> Portfolio</a></li>
+                        <li><a href="https://jahidads.github.io/CyberShield/"><i class="fas fa-chevron-right"></i> CyberShield</a></li>
+                        <li><a href="https://jahidads.github.io/Cyber-Security/"><i class="fas fa-chevron-right"></i> Cybersecurity</a></li>
+                        <li><a href="https://jahidads.github.io/business-portfolio/"><i class="fas fa-chevron-right"></i> BizName</a></li>
+                        <li><a href="https://jahidads.github.io/Blog/"><i class="fas fa-chevron-right"></i> Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="https://jahidads.github.io/Web-Developer/"><i class="fas fa-chevron-right"></i> Web Design</a></li>
+                        <li><a href="https://jahidads.github.io/Developer-portfolio/"><i class="fas fa-chevron-right"></i> Development</a></li>
+                        <li><a href="https://jahidads.github.io/WorkHub/"><i class="fas fa-chevron-right"></i> Animation</a></li>
+                        <li><a href="https://jahidads.github.io/WorkHub/"><i class="fas fa-chevron-right"></i> AI Art</a></li>
+                        <li><a href="https://jahidads.github.io/WorkHub/"><i class="fas fa-chevron-right"></i> Retro Tech</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="mailto:jahidads.dev@gmail.com"><i class="fas fa-envelope"></i> jahidads.dev@gmail.com</a></li>
+                        <li><a href="https://maps.app.goo.gl/VB78ZChiQixFYHnA8"><i class="fas fa-map-marker-alt"></i> jahidads, Ekorgara</a></li>
+                        <li><a href="https://wa.me/8801308839759"><i class="fas fa-phone"></i> +880 13088 39759</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 PixelPatch. Designer Jahid Hasan. Embrace the chaos!
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sticker hover effects
+        document.querySelectorAll('.sticker').forEach(sticker => {
+            sticker.addEventListener('mouseenter', () => {
+                sticker.style.animation = 'none';
+                sticker.style.transform = 'scale(1.2) rotate(10deg)';
+                setTimeout(() => {
+                    sticker.style.animation = 'float 5s infinite ease-in-out';
+                }, 1000);
+            });
+            
+            sticker.addEventListener('mouseleave', () => {
+                sticker.style.transform = '';
+            });
+        });
+        
+        // Button hover effects
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'translateY(-5px) rotate(3deg)';
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+        
+        // Card hover effects
+        document.querySelectorAll('.post-card, .project-card, .sticker-item').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.zIndex = '';
+            });
+        });
+        
+        // Initialize animations on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to elements when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Observe all animated elements
+            document.querySelectorAll('.post-card, .project-card, .sticker-item').forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
